@@ -17,7 +17,7 @@ public record BackendProperties(
         @NotNull Identity identity,
         @NotNull @Valid List<TrustFramework> trustFrameworks,
         // Legacy PlainListEntity status list URLs whose status check is bypassed.
-        // TODO remove once the last credential of this type expires in DOME.
+        // Remove once the last credential of this type expires in DOME.
         List<String> plainListEntityBypassUrls
 ) {
 

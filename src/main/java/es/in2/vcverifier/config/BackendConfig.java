@@ -45,7 +45,7 @@ public class BackendConfig {
     }
 
     // Legacy PlainListEntity status list URLs whose status check is bypassed.
-    // TODO remove once the last credential of this type expires in DOME.
+    // Remove once the last credential of this type expires in DOME.
     public List<String> getPlainListEntityBypassUrls() {
         List<String> urls = properties.plainListEntityBypassUrls();
         if (urls == null) {

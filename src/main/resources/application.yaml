@@ -104,6 +104,6 @@ verifier:
         revokedCredentialListUrl:
     # Legacy PlainListEntity status list URLs whose status check is bypassed (OPTIONAL, comma-separated)
     # Env var: VERIFIER_BACKEND_PLAINLISTENTITYBYPASSURLS
-    # TODO remove once the last credential of this type expires in DOME.
+    # Remove once the last credential of this type expires in DOME.
     plainListEntityBypassUrls:
 
