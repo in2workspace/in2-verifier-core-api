@@ -101,6 +101,30 @@ class BackendPropertiesTest {
                 });
     }
 
+    @Test
+    void testPlainListEntityBypassUrlsBoundFromCommaSeparatedValue() {
+        new ApplicationContextRunner()
+                .withUserConfiguration(TestConfig.class)
+                .withPropertyValues(
+                        "verifier.backend.url=https://raw.githubusercontent.com",
+                        "verifier.backend.identity.didKey=did:key",
+                        "verifier.backend.identity.privateKey=test-private-key",
+                        "verifier.backend.identity.verifiableCredential=verifiableCredential",
+                        "verifier.backend.trustFrameworks[0].name=DOME",
+                        "verifier.backend.trustFrameworks[0].trustedIssuersListUrl=https://raw.githubusercontent.com",
+                        "verifier.backend.trustFrameworks[0].trustedServicesListUrl=https://raw.githubusercontent.com/in2workspace/in2-dome-gitops/refs/heads/main/trust-framework/trusted_services_list.yaml",
+                        "verifier.backend.trustFrameworks[0].revokedCredentialListUrl=https://raw.githubusercontent.com/in2workspace/in2-dome-gitops/refs/heads/main/trust-framework/revoked_credential_list.yaml",
+                        "verifier.backend.plainListEntityBypassUrls=https://a.example.com/backoffice/v1/credentials/status/1,https://b.example.com/backoffice/v1/credentials/status/1"
+                )
+                .run(context -> {
+                    assertThat(context).hasNotFailed();
+                    assertThat(context.getBean(BackendProperties.class).plainListEntityBypassUrls())
+                            .containsExactly(
+                                    "https://a.example.com/backoffice/v1/credentials/status/1",
+                                    "https://b.example.com/backoffice/v1/credentials/status/1");
+                });
+    }
+
     @EnableConfigurationProperties(BackendProperties.class)
     static class TestConfig {
     }

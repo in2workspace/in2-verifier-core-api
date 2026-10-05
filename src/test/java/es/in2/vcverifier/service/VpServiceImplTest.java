@@ -6,6 +6,7 @@ import com.nimbusds.jose.Payload;
 import com.nimbusds.jose.shaded.gson.internal.LinkedTreeMap;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
+import es.in2.vcverifier.config.BackendConfig;
 import es.in2.vcverifier.exception.*;
 import es.in2.vcverifier.model.credentials.SimpleIssuer;
 import es.in2.vcverifier.model.credentials.lear.CredentialStatus;
@@ -62,6 +63,9 @@ class VpServiceImplTest {
 
     @Mock
     private ObjectMapper objectMapper;
+
+    @Mock
+    private BackendConfig backendConfig;
 
     @InjectMocks
     private VpServiceImpl vpServiceImpl;
@@ -748,7 +752,7 @@ class VpServiceImplTest {
 
     @Test
     void extractDidFromKidIssSub_validKidWithFragment_returnsDidWithoutFragment() throws Exception {
-        VpServiceImpl service = new VpServiceImpl(null, null, null, null, null);
+        VpServiceImpl service = new VpServiceImpl(null, null, null, null, null, null);
         Method method = VpServiceImpl.class.getDeclaredMethod("extractDidFromKidIssSub", String.class, String.class, String.class);
         method.setAccessible(true);
 
@@ -762,7 +766,7 @@ class VpServiceImplTest {
 
     @Test
     void extractDidFromKidIssSub_validKidWithoutFragment_returnsKid() throws Exception {
-        VpServiceImpl service = new VpServiceImpl(null, null, null, null, null);
+        VpServiceImpl service = new VpServiceImpl(null, null, null, null, null, null);
         Method method = VpServiceImpl.class.getDeclaredMethod("extractDidFromKidIssSub", String.class, String.class, String.class);
         method.setAccessible(true);
 
@@ -776,7 +780,7 @@ class VpServiceImplTest {
 
     @Test
     void extractDidFromKidIssSub_invalidKid_validIss_returnsIss() throws Exception {
-        VpServiceImpl service = new VpServiceImpl(null, null, null, null, null);
+        VpServiceImpl service = new VpServiceImpl(null, null, null, null, null, null);
         Method method = VpServiceImpl.class.getDeclaredMethod("extractDidFromKidIssSub", String.class, String.class, String.class);
         method.setAccessible(true);
 
@@ -790,7 +794,7 @@ class VpServiceImplTest {
 
     @Test
     void extractDidFromKidIssSub_invalidKid_invalidIss_validSub_returnsSub() throws Exception {
-        VpServiceImpl service = new VpServiceImpl(null, null, null, null, null);
+        VpServiceImpl service = new VpServiceImpl(null, null, null, null, null, null);
         Method method = VpServiceImpl.class.getDeclaredMethod("extractDidFromKidIssSub", String.class, String.class, String.class);
         method.setAccessible(true);
 
@@ -804,7 +808,7 @@ class VpServiceImplTest {
 
     @Test
     void extractDidFromKidIssSub_allInvalid_returnsNull() throws Exception {
-        VpServiceImpl service = new VpServiceImpl(null, null, null, null, null);
+        VpServiceImpl service = new VpServiceImpl(null, null, null, null, null, null);
         Method method = VpServiceImpl.class.getDeclaredMethod("extractDidFromKidIssSub", String.class, String.class, String.class);
         method.setAccessible(true);
 
@@ -819,7 +823,7 @@ class VpServiceImplTest {
     @Test
     void safeGetCredentialSubjectId_throwsException_returnsNull() throws Exception {
         // Arrange
-        VpServiceImpl service = new VpServiceImpl(null, null, null, null, null);
+        VpServiceImpl service = new VpServiceImpl(null, null, null, null, null, null);
         Method method = VpServiceImpl.class.getDeclaredMethod("safeGetCredentialSubjectId", LEARCredential.class);
         method.setAccessible(true);
 
@@ -836,7 +840,7 @@ class VpServiceImplTest {
     @Test
     void safeGetCredentialSubjectId_validId_returnsId() throws Exception {
         // Arrange
-        VpServiceImpl service = new VpServiceImpl(null, null, null, null, null);
+        VpServiceImpl service = new VpServiceImpl(null, null, null, null, null, null);
         Method method = VpServiceImpl.class.getDeclaredMethod("safeGetCredentialSubjectId", LEARCredential.class);
         method.setAccessible(true);
 
@@ -852,7 +856,7 @@ class VpServiceImplTest {
     @Test
     void extractBoundDidFromCredential_csIdValidAndMismatchWithVcSub_returnsCsIdWithWarning() throws Exception {
         // Arrange
-        VpServiceImpl service = new VpServiceImpl(null, null, null, null, null);
+        VpServiceImpl service = new VpServiceImpl(null, null, null, null, null, null);
         Method method = VpServiceImpl.class.getDeclaredMethod("extractBoundDidFromCredential", LEARCredential.class, String.class);
         method.setAccessible(true);
 
@@ -877,7 +881,7 @@ class VpServiceImplTest {
         String vpToken = "valid.vp.jwt";
         String vcToken = "valid.vc.jwt";
 
-        VpServiceImpl service = new VpServiceImpl(jwtService, objectMapper, trustFrameworkService, didService, certificateValidationService);
+        VpServiceImpl service = new VpServiceImpl(jwtService, objectMapper, trustFrameworkService, didService, certificateValidationService, backendConfig);
 
         SignedJWT vpSignedJWT = mock(SignedJWT.class);
         SignedJWT vcSignedJWT = mock(SignedJWT.class);
@@ -1260,6 +1264,49 @@ class VpServiceImplTest {
         }
     }
 
+    private static final String PLAIN_LIST_URL = "https://issuer.example.com/backoffice/v1/credentials/status/1";
 
+    private boolean invokeValidateNewCredentialNotRevoked(LEARCredential credential) throws Exception {
+        Method method = VpServiceImpl.class.getDeclaredMethod("validateNewCredentialNotRevoked", LEARCredential.class);
+        method.setAccessible(true);
+        return (boolean) method.invoke(vpServiceImpl, credential);
+    }
+
+    private LEARCredential mockPlainListEntityCredential(String nonce) {
+        LEARCredential credential = mock(LEARCredential.class);
+        when(credential.credentialStatusPurpose()).thenReturn("revocation");
+        when(credential.credentialStatusType()).thenReturn("PlainListEntity");
+        when(credential.statusListCredential()).thenReturn(PLAIN_LIST_URL);
+        lenient().when(credential.credentialStatusListIndex()).thenReturn(nonce);
+        return credential;
+    }
+
+    @Test
+    void validateNewCredentialNotRevoked_plainListEntity_urlInBypassList_skipsStatusListFetch() throws Exception {
+        LEARCredential credential = mockPlainListEntityCredential("nonce-1");
+        when(backendConfig.isPlainListEntityBypassUrl(PLAIN_LIST_URL)).thenReturn(true);
+
+        assertTrue(invokeValidateNewCredentialNotRevoked(credential));
+        verify(trustFrameworkService, never()).getCredentialStatusListData(any());
+    }
+
+    @Test
+    void validateNewCredentialNotRevoked_plainListEntity_urlNotInBypassList_notRevoked() throws Exception {
+        LEARCredential credential = mockPlainListEntityCredential("nonce-1");
+        when(backendConfig.isPlainListEntityBypassUrl(PLAIN_LIST_URL)).thenReturn(false);
+        when(trustFrameworkService.getCredentialStatusListData(PLAIN_LIST_URL)).thenReturn(List.of("other-nonce"));
+
+        assertTrue(invokeValidateNewCredentialNotRevoked(credential));
+        verify(trustFrameworkService).getCredentialStatusListData(PLAIN_LIST_URL);
+    }
+
+    @Test
+    void validateNewCredentialNotRevoked_plainListEntity_urlNotInBypassList_revoked() throws Exception {
+        LEARCredential credential = mockPlainListEntityCredential("nonce-1");
+        when(backendConfig.isPlainListEntityBypassUrl(PLAIN_LIST_URL)).thenReturn(false);
+        when(trustFrameworkService.getCredentialStatusListData(PLAIN_LIST_URL)).thenReturn(List.of("nonce-1"));
+
+        assertFalse(invokeValidateNewCredentialNotRevoked(credential));
+    }
 
 }

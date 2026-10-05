@@ -102,4 +102,8 @@ verifier:
         trustedServicesListUrl:
         # Placeholder for revoked credentials list URL
         revokedCredentialListUrl:
+    # Legacy PlainListEntity status list URLs whose status check is bypassed (OPTIONAL, comma-separated)
+    # Env var: VERIFIER_BACKEND_PLAINLISTENTITYBYPASSURLS
+    # TODO remove once the last credential of this type expires in DOME.
+    plainListEntityBypassUrls:
 

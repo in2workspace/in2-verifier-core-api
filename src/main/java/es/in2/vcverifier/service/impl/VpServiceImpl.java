@@ -6,6 +6,7 @@ import com.nimbusds.jose.Payload;
 import com.nimbusds.jose.jwk.ECKey;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jwt.SignedJWT;
+import es.in2.vcverifier.config.BackendConfig;
 import es.in2.vcverifier.exception.*;
 import es.in2.vcverifier.model.credentials.lear.LEARCredential;
 import es.in2.vcverifier.model.credentials.lear.employee.LEARCredentialEmployeeV1;
@@ -55,6 +56,7 @@ public class VpServiceImpl implements VpService {
     private final TrustFrameworkService trustFrameworkService;
     private final DIDService didService;
     private final CertificateValidationService certificateValidationService;
+    private final BackendConfig backendConfig;
 
 
     @Override
@@ -500,6 +502,11 @@ public class VpServiceImpl implements VpService {
         // TODO Remove once the last credential of this type expires in DOME.
         if ("PlainListEntity".equals(type)) {
             log.info("Validating credential with PlainListEntity credential status");
+            if (backendConfig.isPlainListEntityBypassUrl(learCredential.statusListCredential())) {
+                log.info("Bypassing PlainListEntity status check for configured status list URL: {}",
+                        learCredential.statusListCredential());
+                return true;
+            }
             // Legacy JSON: list of nonces
             return !trustFrameworkService.getCredentialStatusListData(learCredential.statusListCredential())
                     .contains(learCredential.credentialStatusListIndex());

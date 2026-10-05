@@ -10,6 +10,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(classes = {BackendConfig.class, BackendConfigTest.TestConfig.class})
@@ -41,6 +43,32 @@ class BackendConfigTest {
         assertThat(backendConfig.getRevocationListUri())
                 .as("Revocation List URI should match")
                 .isEqualTo("https://raw.githubusercontent.com/in2workspace/in2-dome-gitops/refs/heads/main/trust-framework/revoked_credential_list.yaml");
+    }
+
+    @Test
+    void testPlainListEntityBypassUrlsEmptyByDefault() {
+        assertThat(backendConfig.getPlainListEntityBypassUrls()).isEmpty();
+        assertThat(backendConfig.isPlainListEntityBypassUrl("https://issuer.example.com/backoffice/v1/credentials/status/1")).isFalse();
+    }
+
+    @Test
+    void testPlainListEntityBypassUrlsMatching() {
+        BackendProperties properties = new BackendProperties(
+                "https://raw.githubusercontent.com",
+                null,
+                List.of(),
+                List.of(" https://issuer.example.com/backoffice/v1/credentials/status/1/ ", "", "https://other.example.com/backoffice/v1/credentials/status/1")
+        );
+        BackendConfig config = new BackendConfig(properties);
+
+        assertThat(config.getPlainListEntityBypassUrls()).containsExactly(
+                "https://issuer.example.com/backoffice/v1/credentials/status/1",
+                "https://other.example.com/backoffice/v1/credentials/status/1");
+        assertThat(config.isPlainListEntityBypassUrl("https://issuer.example.com/backoffice/v1/credentials/status/1")).isTrue();
+        assertThat(config.isPlainListEntityBypassUrl("https://issuer.example.com/backoffice/v1/credentials/status/1/")).isTrue();
+        assertThat(config.isPlainListEntityBypassUrl("https://issuer.example.com/backoffice/v1/credentials/status/2")).isFalse();
+        assertThat(config.isPlainListEntityBypassUrl("https://unknown.example.com/backoffice/v1/credentials/status/1")).isFalse();
+        assertThat(config.isPlainListEntityBypassUrl(null)).isFalse();
     }
 
     @Configuration
