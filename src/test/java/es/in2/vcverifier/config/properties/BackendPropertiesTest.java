@@ -25,8 +25,8 @@ class BackendPropertiesTest {
         BackendProperties.TrustFramework expectedTrustFramework = new BackendProperties.TrustFramework(
                 "DOME",
                 "https://raw.githubusercontent.com",
-                "https://raw.githubusercontent.com/in2workspace/in2-dome-gitops/refs/heads/main/trust-framework/trusted_services_list.yaml",
-                "https://raw.githubusercontent.com/in2workspace/in2-dome-gitops/refs/heads/main/trust-framework/revoked_credential_list.yaml"
+                "https://raw.githubusercontent.com/in2workspace/in2-dome-gitops/refs/heads/main/trust-framework/tenant-red-marketplace/trusted_services_list.yaml",
+                "https://raw.githubusercontent.com/in2workspace/in2-dome-gitops/refs/heads/main/trust-framework/tenant-red-marketplace/revoked_credential_list.yaml"
         );
 
         assertThat(backendProperties.url())
@@ -56,8 +56,8 @@ class BackendPropertiesTest {
                         "verifier.backend.identity.privateKey=test-private-key",
                         "verifier.backend.trustFrameworks[0].name=DOME",
                         "verifier.backend.trustFrameworks[0].trustedIssuersListUrl=https://raw.githubusercontent.com",
-                        "verifier.backend.trustFrameworks[0].trustedServicesListUrl=https://raw.githubusercontent.com/in2workspace/in2-dome-gitops/refs/heads/main/trust-framework/trusted_services_list.yaml",
-                        "verifier.backend.trustFrameworks[0].revokedCredentialListUrl=https://raw.githubusercontent.com/in2workspace/in2-dome-gitops/refs/heads/main/trust-framework/revoked_credential_list.yaml"
+                        "verifier.backend.trustFrameworks[0].trustedServicesListUrl=https://raw.githubusercontent.com/in2workspace/in2-dome-gitops/refs/heads/main/trust-framework/tenant-red-marketplace/trusted_services_list.yaml",
+                        "verifier.backend.trustFrameworks[0].revokedCredentialListUrl=https://raw.githubusercontent.com/in2workspace/in2-dome-gitops/refs/heads/main/trust-framework/tenant-red-marketplace/revoked_credential_list.yaml"
                 )
                 .run(context -> {
                     assertThat(context).hasFailed();
@@ -74,8 +74,8 @@ class BackendPropertiesTest {
                         // "verifier.backend.identity.privateKey" no s'estableix
                         "verifier.backend.trustFrameworks[0].name=DOME",
                         "verifier.backend.trustFrameworks[0].trustedIssuersListUrl=https://raw.githubusercontent.com",
-                        "verifier.backend.trustFrameworks[0].trustedServicesListUrl=https://raw.githubusercontent.com/in2workspace/in2-dome-gitops/refs/heads/main/trust-framework/trusted_services_list.yaml",
-                        "verifier.backend.trustFrameworks[0].revokedCredentialListUrl=https://raw.githubusercontent.com/in2workspace/in2-dome-gitops/refs/heads/main/trust-framework/revoked_credential_list.yaml"
+                        "verifier.backend.trustFrameworks[0].trustedServicesListUrl=https://raw.githubusercontent.com/in2workspace/in2-dome-gitops/refs/heads/main/trust-framework/tenant-red-marketplace/trusted_services_list.yaml",
+                        "verifier.backend.trustFrameworks[0].revokedCredentialListUrl=https://raw.githubusercontent.com/in2workspace/in2-dome-gitops/refs/heads/main/trust-framework/tenant-red-marketplace/revoked_credential_list.yaml"
                 )
                 .run(context -> {
                     assertThat(context).hasFailed();
@@ -93,8 +93,8 @@ class BackendPropertiesTest {
                         "verifier.backend.identity.verifiableCredential=verifiableCredential",
                         "verifier.backend.trustFrameworks[0].name=DOME",
                         "verifier.backend.trustFrameworks[0].trustedIssuersListUrl=https://raw.githubusercontent.com",
-                        "verifier.backend.trustFrameworks[0].trustedServicesListUrl=https://raw.githubusercontent.com/in2workspace/in2-dome-gitops/refs/heads/main/trust-framework/trusted_services_list.yaml",
-                        "verifier.backend.trustFrameworks[0].revokedCredentialListUrl=https://raw.githubusercontent.com/in2workspace/in2-dome-gitops/refs/heads/main/trust-framework/revoked_credential_list.yaml"
+                        "verifier.backend.trustFrameworks[0].trustedServicesListUrl=https://raw.githubusercontent.com/in2workspace/in2-dome-gitops/refs/heads/main/trust-framework/tenant-red-marketplace/trusted_services_list.yaml",
+                        "verifier.backend.trustFrameworks[0].revokedCredentialListUrl=https://raw.githubusercontent.com/in2workspace/in2-dome-gitops/refs/heads/main/trust-framework/tenant-red-marketplace/revoked_credential_list.yaml"
                 )
                 .run(context -> {
                     assertThat(context).hasNotFailed();
@@ -112,8 +112,8 @@ class BackendPropertiesTest {
                         "verifier.backend.identity.verifiableCredential=verifiableCredential",
                         "verifier.backend.trustFrameworks[0].name=DOME",
                         "verifier.backend.trustFrameworks[0].trustedIssuersListUrl=https://raw.githubusercontent.com",
-                        "verifier.backend.trustFrameworks[0].trustedServicesListUrl=https://raw.githubusercontent.com/in2workspace/in2-dome-gitops/refs/heads/main/trust-framework/trusted_services_list.yaml",
-                        "verifier.backend.trustFrameworks[0].revokedCredentialListUrl=https://raw.githubusercontent.com/in2workspace/in2-dome-gitops/refs/heads/main/trust-framework/revoked_credential_list.yaml",
+                        "verifier.backend.trustFrameworks[0].trustedServicesListUrl=https://raw.githubusercontent.com/in2workspace/in2-dome-gitops/refs/heads/main/trust-framework/tenant-red-marketplace/trusted_services_list.yaml",
+                        "verifier.backend.trustFrameworks[0].revokedCredentialListUrl=https://raw.githubusercontent.com/in2workspace/in2-dome-gitops/refs/heads/main/trust-framework/tenant-red-marketplace/revoked_credential_list.yaml",
                         "verifier.backend.plainListEntityBypassUrls=https://a.example.com/backoffice/v1/credentials/status/1,https://b.example.com/backoffice/v1/credentials/status/1"
                 )
                 .run(context -> {
