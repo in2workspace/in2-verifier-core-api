@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [v2.0.14](https://github.com/in2workspace/in2-verifier-api/releases/tag/v2.0.14)
 ### Added
-- Configurable list of legacy `PlainListEntity` status list URLs (`VERIFIER_BACKEND_PLAINLISTENTITYBYPASSURLS`) for which the status list check is bypassed.
+- Configurable list of issuer base URLs (`VERIFIER_BACKEND_PLAINLISTENTITYBYPASSURLS`, e.g. `https://issuer.example.org`) for which the legacy `PlainListEntity` status list check is bypassed. Any path in an entry is ignored.
 
 ## [v2.0.13](https://github.com/in2workspace/in2-verifier-api/releases/tag/v2.0.13)
 ### Added
