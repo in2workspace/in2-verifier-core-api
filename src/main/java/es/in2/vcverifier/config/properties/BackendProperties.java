@@ -15,7 +15,10 @@ import java.util.NoSuchElementException;
 public record BackendProperties(
         @NotBlank @URL String url,
         @NotNull Identity identity,
-        @NotNull @Valid List<TrustFramework> trustFrameworks
+        @NotNull @Valid List<TrustFramework> trustFrameworks,
+        // Issuer base URLs whose legacy PlainListEntity status lists are bypassed.
+        // Remove once the last credential of this type expires in DOME.
+        List<String> plainListEntityBypassUrls
 ) {
 
     public record Identity(
